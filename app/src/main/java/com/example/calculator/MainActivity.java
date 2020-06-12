@@ -12,7 +12,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button zero, one, two, three, four, five, six, seven, eight, nine;
     private Button add, subtract, multiple, divide;
-    private Button equalSign, dot, reset, deleteDibit;
+    private Button equalSign, dot, reset, deleteDigit;
     private TextView value1_info, value2_info, operation_info, result_info;
     private char operation;
     private double value1, value2, result;
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         this.equalSign = (Button) findViewById(R.id.btn_equalSign);
         this.dot = (Button) findViewById(R.id.btn_dot);
         this.reset = (Button) findViewById(R.id.btn_reset);
-        this.deleteDibit = (Button) findViewById(R.id.btn_deleteDigit);
+        this.deleteDigit = (Button) findViewById(R.id.btn_deleteDigit);
 
         // TextViews.
         this.value1_info = (TextView) findViewById(R.id.value1_view);
@@ -92,6 +92,27 @@ public class MainActivity extends AppCompatActivity {
                 value2_info.setText(null);
                 operation_info.setText(null);
                 result_info.setText("Result: ");
+            }
+        });
+
+        this.deleteDigit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // delete digits of the first value if it's not inserted yet.
+                if (!value1_inserted) {
+                    // get the value as a string
+                    String text = value1_info.getText().toString();
+                    // get the length of the string.
+                    int text_len = text.length();
+                    // set the string to the bar of the first value without the last character.
+                    value1_info.setText(text.substring(0, text_len - (text_len == 0? 0 : 1)));
+                }
+                // otherwise, delete digits of the second value.
+                else {
+                    String text = value2_info.getText().toString();
+                    int text_len = text.length();
+                    value2_info.setText(text.substring(0, text_len - (text_len == 0? 0 : 1)));
+                }
             }
         });
     }
