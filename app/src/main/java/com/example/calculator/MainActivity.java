@@ -23,8 +23,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /* find forms by their ids. */
-        // buttons
+        setupViews();
+        processButtonsListeners();
+    }
+
+    private void setupViews() {
+        /*** finds forms by their ids. ***/
+
+        // digit buttons.
         this.zero = (Button) findViewById(R.id.btn_digit0);
         this.one = (Button) findViewById(R.id.btn_digit1);
         this.two = (Button) findViewById(R.id.btn_digit2);
@@ -36,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         this.eight = (Button) findViewById(R.id.btn_digit8);
         this.nine = (Button) findViewById(R.id.btn_digit9);
 
+        // operations buttons.
         this.add = (Button) findViewById(R.id.btn_add);
         this.subtract = (Button) findViewById(R.id.btn_subtract);
         this.multiple = (Button) findViewById(R.id.btn_multiple);
@@ -51,8 +58,12 @@ public class MainActivity extends AppCompatActivity {
         this.value2_info = (TextView) findViewById(R.id.value2_view);
         this.operation_info = (TextView) findViewById(R.id.operation_view);
         this.result_info = (TextView) findViewById(R.id.result_view);
+    }
 
-        /* process buttons. */
+    private void processButtonsListeners() {
+        /*** processes buttons listeners. ***/
+
+        // process digit buttons.
         this.processDigit(zero, "0");
         this.processDigit(one, "1");
         this.processDigit(two, "2");
@@ -65,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
         this.processDigit(nine, "9");
         this.processDigit(dot, ".");
 
+        // process operations buttons.
         this.processOperation(add, '+');
         this.processOperation(subtract, '-');
         this.processOperation(multiple, '*');
@@ -73,7 +85,9 @@ public class MainActivity extends AppCompatActivity {
         this.equalSign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                calculate();
+                result = calculate();
+                // show the result in the result bar.
+                result_info.setText("Result: " + (value1 = result));
             }
         });
 
@@ -105,13 +119,13 @@ public class MainActivity extends AppCompatActivity {
                     // get the length of the string.
                     int text_len = text.length();
                     // set the string to the bar of the first value without the last character.
-                    value1_info.setText(text.substring(0, text_len - (text_len == 0? 0 : 1)));
+                    value1_info.setText(text.substring(0, text_len - (text_len == 0 ? 0 : 1)));
                 }
                 // otherwise, delete digits of the second value.
                 else {
                     String text = value2_info.getText().toString();
                     int text_len = text.length();
-                    value2_info.setText(text.substring(0, text_len - (text_len == 0? 0 : 1)));
+                    value2_info.setText(text.substring(0, text_len - (text_len == 0 ? 0 : 1)));
                 }
             }
         });
@@ -133,17 +147,7 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // check if the second field is inserted correctly.
-                try {
-                    // save the first number that the user has inserted.
-                    value1 = Double.parseDouble(value1_info.getText().toString());
-                }
-                catch (Exception ex) {
-                    Toast.makeText(getApplicationContext(), "The first field is incorrect",
-                            Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                // an operation button is pressed that means the user wants to insert the second value
+                // an operation button is pressed. That means the user wants to insert the second value
                 // so we mark that inserting the first value is completed.
                 value1_inserted = true;
                 // save the user operation choice.
@@ -153,46 +157,55 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void calculate() {
-        // check if the second field is inserted correctly.
-        try {
-            // save the first number that the user has inserted.
-            this.value1 = Double.parseDouble(this.value1_info.getText().toString());
-        }
-        catch (Exception ex) {
-            Toast.makeText(getApplicationContext(), "The first field is incorrect",
-                    Toast.LENGTH_SHORT).show();
-            return;
-        }
+    private double calculate() {
+        double result = Double.NaN;
+        
+        if (!checkOutInputs()) return result;
 
-        // check if the second field is inserted correctly.
-        try {
-            // save the second number that the user has inserted.
-            this.value2 = Double.parseDouble(this.value2_info.getText().toString());
-        }
-        catch (Exception ex) {
-            Toast.makeText(getApplicationContext(),"The second field is incorrect",
-                    Toast.LENGTH_SHORT).show();
-            return;
-        }
+        this.value1 = Double.parseDouble(this.value1_info.getText().toString());
+        this.value2 = Double.parseDouble(this.value2_info.getText().toString());
 
         // calculate the two numbers depending on the operation the user has chose.
         switch (this.operation) {
             case '+':
-                this.result =  this.value1 + this.value2;
+                result = this.value1 + this.value2;
                 break;
             case '-':
-                this.result = this.value1 - this.value2;
+                result = this.value1 - this.value2;
                 break;
             case '*':
-                this.result = this.value1 * this.value2;
+                result = this.value1 * this.value2;
                 break;
             case '/':
-                this.result = this.value1 / this.value2;
+                result = this.value1 / this.value2;
                 break;
         }
 
-        // show the result in the result bar.
-        this.result_info.setText("Result: " + (this.value1 = this.result));
+        return result;
+    }
+
+    private boolean checkOutInputs() {
+        /*** checks out if the inserted values are correct. ***/
+
+        // check if the first field is inserted correctly.
+        try {
+            Double.parseDouble(this.value1_info.getText().toString());
+        } catch (Exception ex) {
+            Toast.makeText(getApplicationContext(), "The first field is incorrect",
+                    Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        // check if the second field is inserted correctly.
+        try {
+            Double.parseDouble(this.value2_info.getText().toString());
+        } catch (Exception ex) {
+            Toast.makeText(getApplicationContext(), "The second field is incorrect",
+                    Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        // success.
+        return true;
     }
 }
