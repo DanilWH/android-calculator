@@ -14,6 +14,11 @@ public class MainActivity extends AppCompatActivity {
     private Button add, subtract, multiple, divide;
     private Button equalSign, dot, reset, deleteDigit;
     private TextView value1_info, value2_info, operation_info, result_info;
+
+    private final char ADDITION = '+';
+    private final char SUBTRACTION = '-';
+    private final char MULTIPLICATION = '*';
+    private final char DIVISION = '/';
     private char operation;
     private double value1, value2, result;
     private boolean value1_inserted = false;
@@ -77,10 +82,10 @@ public class MainActivity extends AppCompatActivity {
         this.processDigit(dot, ".");
 
         // process operations buttons.
-        this.processOperation(add, '+');
-        this.processOperation(subtract, '-');
-        this.processOperation(multiple, '*');
-        this.processOperation(divide, '/');
+        this.processOperation(add, ADDITION);
+        this.processOperation(subtract, SUBTRACTION);
+        this.processOperation(multiple, MULTIPLICATION);
+        this.processOperation(divide, DIVISION);
 
         this.equalSign.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -159,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
 
     private double calculate() {
         double result = Double.NaN;
-        
+
         if (!checkOutInputs()) return result;
 
         this.value1 = Double.parseDouble(this.value1_info.getText().toString());
@@ -167,16 +172,16 @@ public class MainActivity extends AppCompatActivity {
 
         // calculate the two numbers depending on the operation the user has chose.
         switch (this.operation) {
-            case '+':
+            case ADDITION:
                 result = this.value1 + this.value2;
                 break;
-            case '-':
+            case SUBTRACTION:
                 result = this.value1 - this.value2;
                 break;
-            case '*':
+            case MULTIPLICATION:
                 result = this.value1 * this.value2;
                 break;
-            case '/':
+            case DIVISION:
                 result = this.value1 / this.value2;
                 break;
         }
